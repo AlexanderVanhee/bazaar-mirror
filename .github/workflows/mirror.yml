@@ -1,0 +1,20 @@
+name: Mirror from GNOME GitLab
+
+on:
+  schedule:
+    - cron: '*/30 * * * *'
+  workflow_dispatch:
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Mirror branches and tags
+        env:
+          TOKEN: ${{ secrets.MIRROR_TOKEN }}
+        run: |
+          git clone --bare https://gitlab.gnome.org/World/bazaar.git repo
+          cd repo
+          git push --force --prune \
+            "https://x-access-token:${TOKEN}@github.com/AlexanderVanhee/bazaar.git" \
+            'refs/heads/*:refs/heads/*' 'refs/tags/*:refs/tags/*'
